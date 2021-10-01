@@ -8,26 +8,26 @@ namespace BookApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BookController : ControllerBase
+    public class BooksController : ControllerBase
     {
-        private readonly BookRepository _bookRepository;
+        private readonly BooksRepository _booksRepository;
 
-        public BookController(BookRepository bookRepository)
+        public BooksController(BooksRepository booksRepository)
         {
-            _bookRepository = bookRepository;
+            _booksRepository = booksRepository;
         }
 
         [HttpGet]
         public IActionResult Get()
         {
-            var books = _bookRepository.Get();
+            var books = _booksRepository.Get();
             return Ok(books);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById([FromRoute] Guid id)
         {
-            var book = _bookRepository.GetById(id);
+            var book = _booksRepository.GetById(id);
             if (book == null)
             {
                 return NotFound();
@@ -38,14 +38,14 @@ namespace BookApi.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Book book)
         {
-            var addedBook = _bookRepository.Add(book);
+            var addedBook = _booksRepository.Add(book);
             return Created(new Uri(Request.GetEncodedUrl() + "/" + addedBook.Id), addedBook);
         }
 
         [HttpPut("{id}")]
         public IActionResult Update([FromRoute] Guid id,[FromBody] Book book)
         {
-            var updatedBook = _bookRepository.Update(id, book);
+            var updatedBook = _booksRepository.Update(id, book);
             if(updatedBook == null)
             {
                 return NotFound();
@@ -56,7 +56,7 @@ namespace BookApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] Guid id)
         {
-            _bookRepository.Delete(id);
+            _booksRepository.Delete(id);
             return NoContent();
         }
     }

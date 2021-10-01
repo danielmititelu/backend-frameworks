@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="BookRepository.fs" />
-    <Compile Include="Controllers\BookController.fs" />
+    <Compile Include="BooksRepository.fs" />
+    <Compile Include="Controllers\BooksController.fs" />
     <Compile Include="Startup.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

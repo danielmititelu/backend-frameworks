@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace BookApi.Repository
 {
-    public class BookRepository
+    public class BooksRepository
     {
         private Dictionary<Guid, Book> _books;
 
-        public BookRepository()
+        public BooksRepository()
         {
             _books = new Dictionary<Guid, Book>();
         }
