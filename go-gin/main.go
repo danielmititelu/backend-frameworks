@@ -15,7 +15,7 @@ type book struct {
 	Pages  float64 `json:"pages"`
 }
 
-var books = []book{}
+var books = make(map[string]book)
 
 func main() {
 	router := gin.Default()
@@ -28,42 +28,46 @@ func main() {
 }
 
 func getBooks(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, books)
+	values := make([]book, 0, len(books))
+
+	for _, book := range books {
+		values = append(values, book)
+	}
+	c.IndentedJSON(http.StatusOK, values)
 }
 
 func postBook(c *gin.Context) {
-	var newBooks book
+	var newBook book
 
-	if err := c.BindJSON(&newBooks); err != nil {
+	if err := c.BindJSON(&newBook); err != nil {
 		return
 	}
-	u, _ := uuid.NewV4()
-	newBooks.Id = u.String()
-	books = append(books, newBooks)
-	c.IndentedJSON(http.StatusCreated, newBooks)
+	id, _ := uuid.NewV4()
+	newBook.Id = id.String()
+	books[newBook.Id] = newBook
+	c.IndentedJSON(http.StatusCreated, newBook)
 }
 
 func getBookById(c *gin.Context) {
 	id := c.Param("id")
 
-	for _, a := range books {
-		if a.Id == id {
-			c.IndentedJSON(http.StatusOK, a)
-			return
-		}
+	book, ok := books[id]
+	if !ok {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "book not found"})
+		return
 	}
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "book not found"})
+	c.IndentedJSON(http.StatusOK, book)
 }
 
 func deleteBook(c *gin.Context) {
 	id := c.Param("id")
 
-	for i, a := range books {
-		if a.Id == id {
-			books[i] = books[len(books)-1]
-			books = books[:len(books)-1]
-			return
-		}
+	_, ok := books[id]
+	if !ok {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "book not found"})
+		return
 	}
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "book not found"})
+
+	delete(books, id)
+	c.IndentedJSON(http.StatusNoContent, gin.H{"message": "book deleted"})
 }
